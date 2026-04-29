@@ -28,42 +28,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Backfill vistas en propiedades que aún tengan 0
-        if (propiedadRepository.count() > 0 &&
-                propiedadRepository.findAll().stream().mapToLong(Propiedad::getVistas).sum() == 0) {
-            int[] vistasSeed = {
-                4812,3501,2990,1850,4200,3100,2300,1650,3800,2750,
-                1900,1420,3200,2600,1750,4500,1300,2100,1600,3900,
-                2400,1100,1450,3300,2050,1200,2800,3600,1950,4100,
-                2700,1500,3700,2200,4300,1350,3000,1700,2500,1250,
-                4600,3400,2050,1800,4000,2350,1550,1400,3150,4900,
-                // nuevas props (índices 50+)
-                850,620,1100,740,960,1800,730,540,
-                1650,2200,480,890,1320,670,1050,930,
-                1500,2800,580,1200,2100,1400,810,460
-            };
-            List<Propiedad> todas = propiedadRepository.findAll();
-            for (int i = 0; i < todas.size(); i++) {
-                long v = i < vistasSeed.length ? vistasSeed[i] : (100 + i * 29L);
-                todas.get(i).setVistas(v);
-            }
-            propiedadRepository.saveAll(todas);
-        }
-
-        // Backfill fechaAlta en propiedades que no la tengan
-        List<Propiedad> sinFecha = propiedadRepository.findAll().stream()
-            .filter(p -> p.getFechaAlta() == null)
-            .collect(Collectors.toList());
-        if (!sinFecha.isEmpty()) {
-            LocalDateTime now = LocalDateTime.now();
-            int[] offsets = {2,5,1,33,3,38,42,50,62,65,71,75,78,91,94,99,103,110,122,126,131,135,145,151,155,162,165,170,4,35,45,67,82,97,107,124,139,153,158,168,6,48,85,115,128,143,7,148,157,155};
-            for (int i = 0; i < sinFecha.size(); i++) {
-                int offset = i < offsets.length ? offsets[i] : (i * 3 + 1);
-                sinFecha.get(i).setFechaAlta(now.minusDays(offset % 365));
-            }
-            propiedadRepository.saveAll(sinFecha);
-        }
-
         if (userRepository.count() == 0) {
             userRepository.saveAll(List.of(
                 new User(null, "adminasturhome@proton.me",  passwordEncoder.encode("admin123"),  Role.ADMIN, "Administrador"),
@@ -297,6 +261,40 @@ public class DataInitializer implements CommandLineRunner {
                 prop("Piso Vistas Ría Avilés Reformado", "Piso", "ALQUILER", "disponible", "Avilés", 680.0, 2, 1, 72.0, now.minusMonths(6).minusDays(16), List.of("https://picsum.photos/seed/p73a/800/450","https://picsum.photos/seed/p73b/800/450","https://picsum.photos/seed/p73c/800/450")),
                 prop("Garaje Trastero Gijón El Coto", "Garaje", "ALQUILER", "disponible", "Gijón", 110.0, 0, 0, 16.0, now.minusMonths(6).minusDays(22), List.of("https://picsum.photos/seed/p74a/800/450"))
             ));
+        }
+
+        // Backfill vistas
+        if (propiedadRepository.findAll().stream().mapToLong(Propiedad::getVistas).sum() == 0) {
+            int[] vistasSeed = {
+                4812,3501,2990,1850,4200,3100,2300,1650,3800,2750,
+                1900,1420,3200,2600,1750,4500,1300,2100,1600,3900,
+                2400,1100,1450,3300,2050,1200,2800,3600,1950,4100,
+                2700,1500,3700,2200,4300,1350,3000,1700,2500,1250,
+                4600,3400,2050,1800,4000,2350,1550,1400,3150,4900,
+                850,620,1100,740,960,1800,730,540,
+                1650,2200,480,890,1320,670,1050,930,
+                1500,2800,580,1200,2100,1400,810,460
+            };
+            List<Propiedad> todas = propiedadRepository.findAll();
+            for (int i = 0; i < todas.size(); i++) {
+                long v = i < vistasSeed.length ? vistasSeed[i] : (100 + i * 29L);
+                todas.get(i).setVistas(v);
+            }
+            propiedadRepository.saveAll(todas);
+        }
+
+        // Backfill fechaAlta
+        List<Propiedad> sinFecha = propiedadRepository.findAll().stream()
+            .filter(p -> p.getFechaAlta() == null)
+            .collect(Collectors.toList());
+        if (!sinFecha.isEmpty()) {
+            LocalDateTime now2 = LocalDateTime.now();
+            int[] offsets = {2,5,1,33,3,38,42,50,62,65,71,75,78,91,94,99,103,110,122,126,131,135,145,151,155,162,165,170,4,35,45,67,82,97,107,124,139,153,158,168,6,48,85,115,128,143,7,148,157,155};
+            for (int i = 0; i < sinFecha.size(); i++) {
+                int offset = i < offsets.length ? offsets[i] : (i * 3 + 1);
+                sinFecha.get(i).setFechaAlta(now2.minusDays(offset % 365));
+            }
+            propiedadRepository.saveAll(sinFecha);
         }
     }
 
