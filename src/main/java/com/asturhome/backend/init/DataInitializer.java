@@ -39,6 +39,11 @@ public class DataInitializer implements CommandLineRunner {
         if (mensajeRepository.count() == 0) {
             mensajeRepository.saveAll(List.of(
 
+                // ── PRUEBA EMAIL ─────────────────────────────────────
+                mensaje("Agente Dos Test", "agente2asturhome@proton.me", "+34 600 000 000", "Información", "Piso Centro Oviedo", "Compra",
+                    "Hola, me interesa este piso. ¿Podríamos hablar?",
+                    "nuevos", LocalDateTime.now().minusHours(1), List.of()),
+
                 // ── NUEVOS (5) ──────────────────────────────────────
                 mensaje("Alejandro Sanz", "a.sanz@email.com", "+34 612 345 678", "Información", "Ático Calle Uría", "Alquiler",
                     "Hola, estoy muy interesado en el ático de la calle Uría. ¿Podríamos concertar una visita esta semana?",
